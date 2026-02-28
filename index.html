@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%234f46e5'/><path d='M16 6 L26 10 L26 18 C26 23 21 27 16 28 C11 27 6 23 6 18 L6 10 Z' fill='none' stroke='white' stroke-width='2.5' stroke-linejoin='round'/><path d='M11 16.5 L14.5 20 L21 13' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BridgetOS monitors identity drift in AI agents, enforces governance policies in real time, and flags anomalies before they become incidents." />
+    <meta property="og:title" content="BridgetOS | Recursive Identity Enforcement" />
+    <meta property="og:description" content="AI agents drift. BridgetOS detects it, governs it, and proves it. The enforcement layer for recursive identity in AI agents." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bridgetos.com" />
+    <meta property="og:site_name" content="BridgetOS" />
+    <meta property="og:image" content="https://bridgetos.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BridgetOS | Recursive Identity Enforcement" />
+    <meta name="twitter:description" content="AI agents drift. BridgetOS detects it, governs it, and proves it." />
+    <meta name="twitter:site" content="@bridgetos" />
+    <meta name="twitter:image" content="https://bridgetos.com/og-image.png" />
+    <!-- Analytics: only loads on the production domain, never on localhost/staging -->
+    <script>
+      if (location.hostname === 'bridgetos.com') {
+        var s = document.createElement('script');
+        s.defer = true;
+        s.dataset.domain = 'bridgetos.com';
+        s.src = 'https://plausible.io/js/script.js';
+        document.head.appendChild(s);
+      }
+    </script>
+    <title>BridgetOS | Recursive Identity Enforcement</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

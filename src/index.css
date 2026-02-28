@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: #030712;
+    color: #f9fafb;
+    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ── Dot grid background ─────────────────────────────────────────── */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(99, 102, 241, 0.13) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ── Hero radial glow ────────────────────────────────────────────── */
+.hero-glow {
+  background: radial-gradient(
+    ellipse 70% 50% at 50% 30%,
+    rgba(99, 102, 241, 0.15) 0%,
+    transparent 70%
+  );
+}
+
+/* ── Gradient headline text ──────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #a5b4fc 0%, #818cf8 40%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glass card surface ──────────────────────────────────────────── */
+.glass {
+  background: rgba(99, 102, 241, 0.04);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── Card hover lift ─────────────────────────────────────────────── */
+.card-hover {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-hover:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 28px rgba(99, 102, 241, 0.1), 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ── Animated nav underline ──────────────────────────────────────── */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #6366f1;
+  transition: width 0.25s ease;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ── Step number ─────────────────────────────────────────────────── */
+.step-num {
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  background: linear-gradient(135deg, rgba(99,102,241,0.35) 0%, rgba(99,102,241,0.08) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  user-select: none;
+}
+
+/* ── Subtle section divider ──────────────────────────────────────── */
+.section-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ── MiniConsole results reveal ──────────────────────────────────── */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);     }
+}
+.results-reveal {
+  animation: revealUp 0.4s ease-out both;
+}
+
+/* ── Component bar grow ──────────────────────────────────────────── */
+@keyframes growBar {
+  from { width: 0% !important; }
+}
+.bar-grow {
+  animation: growBar 0.7s ease-out both;
+}
+
+/* ── Governance log line stagger ─────────────────────────────────── */
+@keyframes logLineIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+.log-line-in {
+  animation: logLineIn 0.22s ease-out both;
+}

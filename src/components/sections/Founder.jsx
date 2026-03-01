@@ -19,7 +19,7 @@ export default function Founder() {
         <blockquote className="text-center mb-16">
           <div className="w-8 h-px bg-indigo-600/40 mx-auto mb-8" />
           <p className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight italic mb-6 max-w-2xl mx-auto">
-            "We are not building characters. We are building the laws that allow characters to exist."
+            "Agentic AI doesn't fail by hallucinating. It fails by drifting. We prevent the drift."
           </p>
           <div className="w-8 h-px bg-indigo-600/40 mx-auto" />
         </blockquote>
@@ -43,7 +43,7 @@ export default function Founder() {
                   LinkedIn →
                 </a>
               </div>
-              <p className="text-xs text-indigo-400 mb-4">Principal Architect · PhD Candidate, King's College London</p>
+              <p className="text-xs text-indigo-400 mb-4">Founder · PhD Candidate, King's College London</p>
               <p className="text-sm text-gray-400 leading-relaxed mb-4">
                 Background spanning clinical science, cybersecurity project management, and advanced
                 work in adaptive learning systems. BridgetOS was developed prior to my doctoral

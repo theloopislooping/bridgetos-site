@@ -20,6 +20,7 @@ import Roadmap          from './components/sections/Roadmap.jsx';
 import WhitePaper       from './components/sections/WhitePaper.jsx';
 import FAQ              from './components/sections/FAQ.jsx';
 import Founder          from './components/sections/Founder.jsx';
+import Pricing         from './components/sections/Pricing.jsx';
 import Partnership      from './components/sections/Partnership.jsx';
 import Footer           from './components/sections/Footer.jsx';
 
@@ -57,6 +58,7 @@ export default function App() {
           <Roadmap />
           <WhitePaper />
           <FAQ />
+          <Pricing onJoin={join} />
           <Founder />
           <Partnership onJoin={join} />
         </main>

@@ -27,7 +27,7 @@ const NAV_GROUPS = [
       { label: 'Roadmap',       href: '#roadmap'       },
       { label: 'White Paper',   href: '#whitepaper'    },
       { label: 'FAQ',           href: '#faq'           },
-      { label: 'Pricing',       href: '#partnership'   },
+      { label: 'Pricing',       href: '#pricing'       },
       { label: 'Founder',       href: '#founder'       },
     ],
   },
@@ -36,6 +36,13 @@ const NAV_GROUPS = [
     links: [
       { label: 'Technical Brief', href: '/technical.html', external: true },
       { label: 'Investors',       href: '/investors.html',  external: true },
+    ],
+  },
+  {
+    group: 'Legal',
+    links: [
+      { label: 'Privacy Policy',    href: '/privacy.html', external: true },
+      { label: 'Terms of Service',  href: '/terms.html',   external: true },
     ],
   },
 ];
@@ -105,7 +112,7 @@ function SidebarContent({ onJoin, onClose, active }) {
           <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center transition-colors group-hover:bg-indigo-500 flex-shrink-0">
             <Shield size={14} className="text-white" />
           </div>
-          <span className="font-bold text-white tracking-tight text-sm">BridgetOS</span>
+          <span className="font-bold text-white tracking-tight text-sm">BridgetOS</span><span className="text-xs ml-0.5 font-light" style={{ color: 'rgba(45,212,191,0.55)' }}>∞</span>
         </a>
       </div>
 
@@ -115,7 +122,7 @@ function SidebarContent({ onJoin, onClose, active }) {
           <div key={group}>
             <p
               className="text-[10px] font-bold uppercase tracking-widest px-2 mb-1.5"
-              style={{ color: group === 'Product' ? 'rgba(165,180,252,0.75)' : group === 'Governance' ? 'rgba(45,212,191,0.5)' : group === 'Company' ? 'rgba(251,191,36,0.6)' : group === 'Access' ? 'rgba(255,102,153,0.5)' : 'rgba(107,114,128,0.7)' }}
+              style={{ color: group === 'Product' ? 'rgba(165,180,252,0.75)' : group === 'Governance' ? 'rgba(45,212,191,0.5)' : group === 'Company' ? 'rgba(251,191,36,0.6)' : group === 'Access' ? 'rgba(255,102,153,0.5)' : group === 'Legal' ? 'rgba(107,114,128,0.55)' : 'rgba(107,114,128,0.7)' }}
             >
               {group}
             </p>

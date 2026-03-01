@@ -23,6 +23,8 @@ export default function Footer() {
             className="hover:text-gray-400 transition-colors"
           >LinkedIn</a>
           <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-gray-400 transition-colors">Contact</a>
+          <a href="/privacy.html" className="hover:text-gray-400 transition-colors">Privacy Policy</a>
+          <a href="/terms.html" className="hover:text-gray-400 transition-colors">Terms of Service</a>
           <span className="text-gray-700">·</span>
           <span>© 2026 Holborn Rowe LLC. All rights reserved.</span>
         </div>

@@ -28,8 +28,8 @@ const FAQS = [
     a: 'BridgetOS exposes a REST API and WebSocket interface. Agent observations are posted to the scoring endpoint; governance state is available via the agents API; the WebSocket stream delivers real-time enforcement events. An SDK for LangChain, AutoGen, and OpenAI Agents SDK is in development and available to design partners.',
   },
   {
-    q: 'Is BridgetOS SOC2 compliant?',
-    a: 'BridgetOS is pre-SOC2 as a pre-launch company. The architecture is designed with SOC2 in mind — append-only audit logs, role-based access controls, JWT authentication with revocation, and structured compliance artifact export. SOC2 Type I audit is on the roadmap for Q4 2026.',
+    q: 'Is BridgetOS SOC 2 or ISO 27001 certified?',
+    a: 'BridgetOS is pre-certification as a pre-launch company. Both SOC 2 and ISO 27001 are on the roadmap — SOC 2 Type I is targeted for Q4 2026, with ISO 27001 to follow for UK enterprise and regulated sector buyers. The architecture is designed with both frameworks in mind: append-only audit logs, role-based access controls, JWT authentication with revocation, encryption in transit, and structured compliance artifact export. We are happy to share our security posture documentation with enterprise prospects on request.',
   },
   {
     q: 'What is the pricing model?',

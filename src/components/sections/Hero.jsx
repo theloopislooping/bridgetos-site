@@ -25,7 +25,10 @@ export default function Hero({ onJoin }) {
         </div>
 
         <h1 className="text-6xl md:text-8xl font-black tracking-tight text-white leading-[1.0] mb-6">
-          BridgetOS
+          BridgetOS<span
+            className="text-4xl md:text-6xl align-super ml-1"
+            style={{ color: '#2dd4bf', opacity: 0.65, textShadow: '0 0 18px rgba(45,212,191,0.5)' }}
+          >∞</span>
         </h1>
 
         <p className="text-2xl md:text-3xl text-white font-bold mb-3 tracking-tight max-w-2xl mx-auto leading-snug">

@@ -23,6 +23,7 @@ import Founder          from './components/sections/Founder.jsx';
 import Pricing         from './components/sections/Pricing.jsx';
 import Partnership      from './components/sections/Partnership.jsx';
 import Footer           from './components/sections/Footer.jsx';
+import CookieNotice     from './components/sections/CookieNotice.jsx';
 
 export default function App() {
   const [showWaitlist, setShowWaitlist] = useState(false);
@@ -63,6 +64,7 @@ export default function App() {
           <Partnership onJoin={join} />
         </main>
         <Footer />
+      <CookieNotice />
       </div>
     </>
   );

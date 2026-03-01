@@ -7,6 +7,7 @@ export default function WaitlistModal({ onClose }) {
   const [form, setForm]     = useState({ firstName: '', lastName: '', email: '', company: '', role: '', useCase: '', referral: '' });
   const [status, setStatus] = useState('idle'); // idle | submitting | success | error | duplicate
   const [errors, setErrors] = useState({});
+  const [agreed, setAgreed] = useState(false);
   const firstRef            = useRef(null);
 
   useEffect(() => {
@@ -235,11 +236,27 @@ export default function WaitlistModal({ onClose }) {
                 </p>
               )}
 
+              {/* Consent checkbox */}
+              <label className="flex items-start gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={agreed}
+                  onChange={e => setAgreed(e.target.checked)}
+                  className="mt-0.5 flex-shrink-0 accent-indigo-500"
+                />
+                <span className="text-xs text-gray-600 leading-relaxed group-hover:text-gray-500 transition-colors">
+                  I agree to the{' '}
+                  <a href="/privacy.html" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">Privacy Policy</a>
+                  {' '}and{' '}
+                  <a href="/terms.html" target="_blank" rel="noopener noreferrer" className="text-indigo-400 hover:text-indigo-300 underline">Terms of Service</a>.
+                </span>
+              </label>
+
               <button
                 type="submit"
-                disabled={status === 'submitting'}
+                disabled={status === 'submitting' || !agreed}
                 className="w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors mt-1"
-                style={{ background: status === 'submitting' ? 'rgba(99,102,241,0.5)' : '#4f46e5' }}
+                style={{ background: (status === 'submitting' || !agreed) ? 'rgba(99,102,241,0.4)' : '#4f46e5' }}
               >
                 {status === 'submitting' ? 'Submitting…' : 'Join the Waitlist →'}
               </button>

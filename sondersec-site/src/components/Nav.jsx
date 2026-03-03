@@ -10,6 +10,7 @@ export default function Nav() {
     { to: '/', label: 'Home' },
     { to: '/what-we-teach', label: 'What We Teach' },
     { to: '/algorithmic-shadows', label: 'Algorithmic Shadows' },
+    { to: '/safe-curriculum', label: 'S.A.F.E.' },
     { to: '/contact', label: 'Contact' },
     { to: '/about', label: 'About Us' },
   ]

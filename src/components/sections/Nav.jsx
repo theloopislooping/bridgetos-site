@@ -34,7 +34,8 @@ const NAV_GROUPS = [
   {
     group: 'Access',
     links: [
-      { label: 'Technical Brief', href: '/technical.html', external: true },
+      { label: 'Technical Brief', href: '/technical.html',  external: true },
+      { label: 'Drift Taxonomy',  href: '/taxonomy.html',   external: true },
       { label: 'Investors',       href: '/investors.html',  external: true },
     ],
   },

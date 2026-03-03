@@ -33,6 +33,7 @@ export default defineConfig({
         main:      resolve(__dirname, 'index.html'),
         investors: resolve(__dirname, 'investors.html'),
         technical: resolve(__dirname, 'technical.html'),
+        taxonomy:  resolve(__dirname, 'taxonomy.html'),
         privacy:   resolve(__dirname, 'privacy.html'),
         terms:     resolve(__dirname, 'terms.html'),
         '404':     resolve(__dirname, '404.html'),

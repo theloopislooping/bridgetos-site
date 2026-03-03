@@ -35,6 +35,12 @@ import {
   Fingerprint,
   Brain,
   AlertOctagon,
+  Trash2,
+  Download,
+  History,
+  ExternalLink,
+  ChevronRight,
+  PhoneCall,
 } from 'lucide-react';
 
 // --- SCAM PATTERN DATABASE ---
@@ -56,14 +62,197 @@ const RISK_PATTERNS = [
   { pattern: /bit\.ly|tinyurl|t\.co|goo\.gl|rb\.gy|cutt\.ly|is\.gd/i, code: 'shortened_url', label: 'Shortened URL', weight: 15 },
 ];
 
+// --- URL ANALYSIS ENGINE ---
+
+const SUSPICIOUS_TLDS = [
+  '.xyz', '.top', '.click', '.buzz', '.tk', '.ml', '.ga', '.cf', '.gq',
+  '.wang', '.club', '.work', '.date', '.loan', '.racing', '.win', '.bid',
+  '.stream', '.download', '.accountant', '.science', '.party', '.cricket',
+  '.faith', '.review', '.zip', '.mov',
+];
+
+const BRAND_TYPOSQUATS = [
+  { brand: 'amazon', real: /^(www\.)?amazon\./i, fake: /amaz[0o]n|amzon|amazn|amaazon/i },
+  { brand: 'paypal', real: /^(www\.)?paypal\./i, fake: /paypa[l1i]|paypai|payypal/i },
+  { brand: 'google', real: /^(www\.|accounts\.)?google\./i, fake: /g[0o]{2}gle|googl[e3]|gogle|goolge/i },
+  { brand: 'apple', real: /^(www\.)?apple\./i, fake: /app[l1]e|appie|aple|applle/i },
+  { brand: 'microsoft', real: /^(www\.)?microsoft\./i, fake: /micr[0o]soft|microsft|mircosoft/i },
+  { brand: 'netflix', real: /^(www\.)?netflix\./i, fake: /netf[l1]ix|netflx|netfiix/i },
+  { brand: 'chase', real: /^(www\.)?chase\./i, fake: /ch[a@]se-|chas[e3]-/i },
+  { brand: 'wellsfargo', real: /^(www\.)?wellsfargo\./i, fake: /wells?farg[0o]|we11sfargo/i },
+  { brand: 'bankofamerica', real: /^(www\.)?bankofamerica\./i, fake: /bankofameric[a@]|b[0o]famerica/i },
+];
+
+const URL_SHORTENERS = [
+  'bit.ly', 'tinyurl.com', 't.co', 'goo.gl', 'rb.gy', 'cutt.ly',
+  'is.gd', 'ow.ly', 'buff.ly', 'short.io', 'rebrand.ly',
+];
+
+function analyzeUrl(url) {
+  const matches = [];
+  let totalWeight = 0;
+
+  let parsed;
+  try {
+    parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
+  } catch {
+    matches.push({ code: 'malformed_url', label: 'Malformed URL', weight: 20, matched: url.slice(0, 60) });
+    return { matches, totalWeight: 20 };
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  const pathname = parsed.pathname.toLowerCase();
+
+  // IP-based URL
+  if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname)) {
+    matches.push({ code: 'ip_url', label: 'IP-Based URL (no domain name)', weight: 30, matched: hostname });
+    totalWeight += 30;
+  }
+
+  // Suspicious TLD
+  const tld = '.' + hostname.split('.').pop();
+  if (SUSPICIOUS_TLDS.includes(tld)) {
+    matches.push({ code: 'suspicious_tld', label: `Suspicious TLD (${tld})`, weight: 20, matched: tld });
+    totalWeight += 20;
+  }
+
+  // Typosquatting / brand impersonation
+  for (const { brand, real, fake } of BRAND_TYPOSQUATS) {
+    if (fake.test(hostname) && !real.test(hostname)) {
+      matches.push({ code: 'typosquat', label: `Possible ${brand} Impersonation`, weight: 35, matched: hostname });
+      totalWeight += 35;
+      break;
+    }
+  }
+
+  // Excessive subdomains (e.g., secure.login.bank.verify.example.com)
+  const parts = hostname.split('.');
+  if (parts.length > 3) {
+    matches.push({ code: 'excessive_subdomains', label: 'Excessive Subdomains', weight: 15, matched: hostname });
+    totalWeight += 15;
+  }
+
+  // Suspicious path keywords
+  if (/\/(login|signin|verify|confirm|account|password|secure|update|billing|payment|bank|wallet)/i.test(pathname)) {
+    const pathMatch = pathname.match(/(login|signin|verify|confirm|account|password|secure|update|billing|payment|bank|wallet)/i);
+    matches.push({ code: 'suspicious_path', label: 'Suspicious Path Keywords', weight: 15, matched: `/${pathMatch[0]}` });
+    totalWeight += 15;
+  }
+
+  // No HTTPS
+  if (parsed.protocol === 'http:') {
+    matches.push({ code: 'no_https', label: 'No HTTPS Encryption', weight: 10, matched: 'http://' });
+    totalWeight += 10;
+  }
+
+  // URL shortener
+  if (URL_SHORTENERS.some(s => hostname === s || hostname.endsWith('.' + s))) {
+    matches.push({ code: 'url_shortener', label: 'URL Shortener (hides real destination)', weight: 20, matched: hostname });
+    totalWeight += 20;
+  }
+
+  // @ symbol in URL (credential phishing trick)
+  if (url.includes('@')) {
+    matches.push({ code: 'at_in_url', label: 'Deceptive @ Symbol in URL', weight: 25, matched: '@' });
+    totalWeight += 25;
+  }
+
+  // Very long URL (often used to hide real domain)
+  if (url.length > 150) {
+    matches.push({ code: 'long_url', label: 'Unusually Long URL', weight: 10, matched: `${url.length} characters` });
+    totalWeight += 10;
+  }
+
+  return { matches, totalWeight };
+}
+
+// --- SCAM PLAYBOOKS (with step-by-step guidance) ---
+
 const SCAM_PLAYBOOKS = {
-  impersonation: { name: 'Government/Authority Scam', guide: 'No government agency will call demanding immediate payment. Hang up. Call the agency directly using the number on their official website.' },
-  family_emergency: { name: 'Family Emergency Scam', guide: 'Hang up immediately. Call the family member directly on their known number. Use your family safe word if you have one.' },
-  delivery: { name: 'Parcel/Delivery Scam', guide: 'Do not click links in delivery messages. Go directly to the carrier website and enter your tracking number manually.' },
-  romance: { name: 'Romance Scam', guide: 'Never send money to someone you haven\'t met in person. Do a reverse image search on their photos. Talk to a trusted friend.' },
-  investment: { name: 'Investment/Crypto Scam', guide: 'If returns sound too good to be true, they are. Verify with your country\'s financial regulator. Never invest under time pressure.' },
-  phishing: { name: 'Phishing Attack', guide: 'Do not enter credentials via any link in a message. Go directly to the website by typing the URL yourself. Enable 2FA on all accounts.' },
-  payment: { name: 'Payment Fraud', guide: 'Legitimate organizations never demand gift cards, crypto, or wire transfers. This is the #1 sign of a scam. Stop all payment immediately.' },
+  impersonation: {
+    name: 'Government/Authority Scam',
+    guide: 'No government agency will call demanding immediate payment. Hang up. Call the agency directly using the number on their official website.',
+    steps: [
+      'Hang up or stop responding immediately',
+      'Do NOT provide any personal information (SSN, bank details, etc.)',
+      'Look up the real agency phone number from their .gov website',
+      'Call the agency directly and ask if they contacted you',
+      'Report the attempt to the FTC',
+    ],
+    contacts: ['FTC: ReportFraud.ftc.gov', 'SSA OIG: 1-800-269-0271', 'IRS: 1-800-366-4484'],
+  },
+  family_emergency: {
+    name: 'Family Emergency Scam',
+    guide: 'Hang up immediately. Call the family member directly on their known number. Use your family safe word if you have one.',
+    steps: [
+      'Stay calm — scammers weaponize panic',
+      'Hang up without giving any information',
+      'Call the family member directly on their real number',
+      'Ask your family safe word if you have one',
+      'Alert other family members about the attempt',
+    ],
+    contacts: ['FBI IC3: ic3.gov', 'FTC: 1-877-382-4357', 'Local police non-emergency line'],
+  },
+  delivery: {
+    name: 'Parcel/Delivery Scam',
+    guide: 'Do not click links in delivery messages. Go directly to the carrier website and enter your tracking number manually.',
+    steps: [
+      'Do NOT click any link in the message',
+      'Go to the carrier website directly (usps.com, ups.com, fedex.com)',
+      'Enter your tracking number manually',
+      'If you didn\'t order anything, it\'s almost certainly a scam',
+      'Forward suspicious texts to 7726 (SPAM)',
+    ],
+    contacts: ['USPS: 1-800-275-8777', 'UPS: 1-800-742-5877', 'FedEx: 1-800-463-3339'],
+  },
+  romance: {
+    name: 'Romance Scam',
+    guide: 'Never send money to someone you haven\'t met in person. Do a reverse image search on their photos. Talk to a trusted friend.',
+    steps: [
+      'Stop all money transfers immediately',
+      'Do a reverse image search on their profile photos',
+      'Never send money, gift cards, or crypto to someone you haven\'t met',
+      'Talk to a trusted friend or family member about the relationship',
+      'Report the profile to the platform and to the FTC',
+    ],
+    contacts: ['FTC: ReportFraud.ftc.gov', 'FBI IC3: ic3.gov', 'AARP Fraud Helpline: 1-877-908-3360'],
+  },
+  investment: {
+    name: 'Investment/Crypto Scam',
+    guide: 'If returns sound too good to be true, they are. Verify with your country\'s financial regulator. Never invest under time pressure.',
+    steps: [
+      'Stop sending money immediately',
+      'Verify the company with SEC (sec.gov) or FCA (fca.org.uk)',
+      'Be suspicious of "guaranteed" returns or time pressure',
+      'Never give remote access to your devices',
+      'Document everything for your report',
+    ],
+    contacts: ['SEC: sec.gov/tcr', 'CFTC: cftc.gov/complaint', 'FCA (UK): 0800 111 6768'],
+  },
+  phishing: {
+    name: 'Phishing Attack',
+    guide: 'Do not enter credentials via any link in a message. Go directly to the website by typing the URL yourself. Enable 2FA on all accounts.',
+    steps: [
+      'Do NOT click links or download attachments',
+      'Go to the website directly by typing the URL yourself',
+      'Change your password if you already clicked',
+      'Enable two-factor authentication (2FA) on all accounts',
+      'Run a malware scan if you downloaded anything',
+    ],
+    contacts: ['Anti-Phishing Working Group: reportphishing@apwg.org', 'FTC: ReportFraud.ftc.gov', 'Google: safebrowsing.google.com/safebrowsing/report_phish/'],
+  },
+  payment: {
+    name: 'Payment Fraud',
+    guide: 'Legitimate organizations never demand gift cards, crypto, or wire transfers. This is the #1 sign of a scam. Stop all payment immediately.',
+    steps: [
+      'STOP all payments immediately',
+      'Contact your bank or card issuer right away',
+      'If you sent gift cards, contact the gift card company with the receipt',
+      'File a report with the FTC and local police',
+      'Monitor your accounts for unauthorized transactions',
+    ],
+    contacts: ['FTC: ReportFraud.ftc.gov', 'FBI IC3: ic3.gov', 'Your bank\'s fraud department'],
+  },
 };
 
 const REASON_CODE_ICONS = {
@@ -81,6 +270,17 @@ const REASON_CODE_ICONS = {
   account_threat: <ShieldAlert className="w-4 h-4" />,
   money_mention: <AlertTriangle className="w-4 h-4" />,
   shortened_url: <LinkIcon className="w-4 h-4" />,
+  // URL analysis codes
+  malformed_url: <AlertOctagon className="w-4 h-4" />,
+  ip_url: <Globe className="w-4 h-4" />,
+  suspicious_tld: <AlertTriangle className="w-4 h-4" />,
+  typosquat: <Fingerprint className="w-4 h-4" />,
+  excessive_subdomains: <LinkIcon className="w-4 h-4" />,
+  suspicious_path: <Lock className="w-4 h-4" />,
+  no_https: <EyeOff className="w-4 h-4" />,
+  url_shortener: <LinkIcon className="w-4 h-4" />,
+  at_in_url: <AlertOctagon className="w-4 h-4" />,
+  long_url: <FileText className="w-4 h-4" />,
 };
 
 // --- ANALYSIS ENGINE ---
@@ -143,6 +343,95 @@ function analyzeContent(text) {
 
   return { rawScore, confidence, level, color, bgColor, borderColor, icon, matches, playbook, needsPaymentInterrupt };
 }
+
+function analyzeUrlContent(url) {
+  // Run URL-specific analysis
+  const urlResult = analyzeUrl(url);
+  // Also run text patterns on the URL string
+  const textResult = analyzeContent(url);
+
+  // Merge matches (URL results first, then text results that don't duplicate)
+  const allMatches = [...urlResult.matches];
+  if (textResult) {
+    for (const m of textResult.matches) {
+      if (!allMatches.some(existing => existing.code === m.code)) {
+        allMatches.push(m);
+      }
+    }
+  }
+
+  const totalWeight = Math.min(urlResult.totalWeight + (textResult?.rawScore || 0), 100);
+  const confidence = allMatches.length >= 3 ? 'high' : allMatches.length >= 2 ? 'medium' : 'low';
+
+  let level, color, bgColor, borderColor, icon;
+  if (totalWeight >= 60) {
+    level = 'Likely Scam';
+    color = 'text-red-500'; bgColor = 'bg-red-500'; borderColor = 'border-red-500';
+    icon = <ShieldAlert className="w-8 h-8 text-red-500" />;
+  } else if (totalWeight >= 30) {
+    level = 'Suspicious';
+    color = 'text-amber-500'; bgColor = 'bg-amber-500'; borderColor = 'border-amber-500';
+    icon = <ShieldQuestion className="w-8 h-8 text-amber-500" />;
+  } else if (totalWeight >= 10) {
+    level = 'Unclear';
+    color = 'text-blue-400'; bgColor = 'bg-blue-400'; borderColor = 'border-blue-400';
+    icon = <Shield className="w-8 h-8 text-blue-400" />;
+  } else {
+    level = 'Likely Safe';
+    color = 'text-emerald-500'; bgColor = 'bg-emerald-500'; borderColor = 'border-emerald-500';
+    icon = <ShieldCheck className="w-8 h-8 text-emerald-500" />;
+  }
+
+  const playbookMatch = allMatches.find(m => SCAM_PLAYBOOKS[m.code]);
+  const playbook = playbookMatch ? SCAM_PLAYBOOKS[playbookMatch.code] : null;
+  const needsPaymentInterrupt = allMatches.some(m => m.code === 'payment');
+
+  return { rawScore: totalWeight, confidence, level, color, bgColor, borderColor, icon, matches: allMatches, playbook, needsPaymentInterrupt };
+}
+
+// --- SCAN HISTORY ---
+
+const HISTORY_KEY = 'sondersec_scan_history';
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveToHistory(entry) {
+  const history = loadHistory();
+  history.unshift(entry);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.slice(0, 50)));
+}
+
+function deleteFromHistory(id) {
+  const history = loadHistory();
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history.filter(h => h.id !== id)));
+}
+
+function exportHistory() {
+  const history = loadHistory();
+  const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `sondersec-scan-history-${new Date().toISOString().slice(0, 10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// --- EMERGENCY CONTACTS ---
+
+const EMERGENCY_CONTACTS = [
+  { label: 'FTC Fraud Report', value: 'ReportFraud.ftc.gov', type: 'web' },
+  { label: 'FBI Internet Crime (IC3)', value: 'ic3.gov', type: 'web' },
+  { label: 'AARP Fraud Helpline', value: '1-877-908-3360', type: 'phone' },
+  { label: 'Identity Theft (FTC)', value: 'IdentityTheft.gov', type: 'web' },
+  { label: 'Spam Texts', value: 'Forward to 7726', type: 'info' },
+  { label: 'Action Fraud (UK)', value: '0300 123 2040', type: 'phone' },
+];
 
 function escapeHtml(str) {
   return str
@@ -256,6 +545,8 @@ export default function ScamDetector() {
   const [showExplain, setShowExplain] = useState(false);
   const [copied, setCopied] = useState(false);
   const [markedSafe, setMarkedSafe] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [history, setHistory] = useState(() => loadHistory());
   const fileInputRef = useRef(null);
 
   const textSize = elderMode ? 'text-lg' : 'text-sm';
@@ -270,16 +561,49 @@ export default function ScamDetector() {
     setInterruptDismissed(false);
     setMarkedSafe(false);
     setShowExplain(false);
+    setShowHistory(false);
 
     // Simulate analysis delay
     setTimeout(() => {
-      const analysis = analyzeContent(text);
+      const analysis = activeChannel === 'url'
+        ? analyzeUrlContent(text)
+        : analyzeContent(text);
       setResult(analysis);
       setAnalyzing(false);
+
+      // Save to history (unless privacy mode)
+      if (analysis && !privacyMode) {
+        const entry = {
+          id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          timestamp: new Date().toISOString(),
+          channel: activeChannel,
+          input: text.slice(0, 120) + (text.length > 120 ? '...' : ''),
+          level: analysis.level,
+          score: analysis.rawScore,
+          matchCount: analysis.matches.length,
+        };
+        saveToHistory(entry);
+        setHistory(loadHistory());
+      }
+
       if (analysis?.needsPaymentInterrupt) {
         setShowInterrupt(true);
       }
     }, 1500);
+  };
+
+  const handleDeleteHistory = (id) => {
+    deleteFromHistory(id);
+    setHistory(loadHistory());
+  };
+
+  const handleClearHistory = () => {
+    localStorage.removeItem(HISTORY_KEY);
+    setHistory([]);
+  };
+
+  const handleExportHistory = () => {
+    exportHistory();
   };
 
   const resetAll = () => {
@@ -355,6 +679,16 @@ export default function ScamDetector() {
               <Globe className="w-4 h-4" />
               <span className="hidden sm:inline">Simple</span>
             </button>
+            <button
+              onClick={() => { setShowHistory(!showHistory); setResult(null); }}
+              className={`p-2 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
+                showHistory ? 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400' : 'border-slate-700 text-slate-500 hover:text-slate-300'
+              }`}
+              title="Scan History"
+            >
+              <History className="w-4 h-4" />
+              <span className="hidden sm:inline">History</span>
+            </button>
           </div>
         </div>
       </header>
@@ -381,7 +715,76 @@ export default function ScamDetector() {
           </div>
         )}
 
-        {!result ? (
+        {/* Scan History Panel */}
+        {showHistory && !result && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <h2 className={`${headingSize} font-bold text-white flex items-center gap-2`}>
+                <History className="w-6 h-6 text-cyan-400" />
+                {plainLanguage ? 'Your past checks' : 'Scan History'}
+              </h2>
+              <div className="flex gap-2">
+                {history.length > 0 && (
+                  <>
+                    <button onClick={handleExportHistory} className="p-2 rounded-lg border border-slate-700 text-slate-400 hover:text-white transition-colors" title="Export">
+                      <Download className="w-4 h-4" />
+                    </button>
+                    <button onClick={handleClearHistory} className="p-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors" title="Clear all">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {history.length === 0 ? (
+              <div className="bg-slate-900 rounded-2xl border border-slate-700 p-12 text-center">
+                <Shield className="w-10 h-10 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-400">{plainLanguage ? 'No checks yet.' : 'No scans recorded yet.'}</p>
+                <p className="text-slate-600 text-xs mt-1">Scans in Private mode are not saved.</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {history.map((entry) => (
+                  <div key={entry.id} className="bg-slate-900 rounded-xl border border-slate-700 p-4 flex items-center gap-4 hover:border-slate-600 transition-colors">
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
+                      entry.level === 'Likely Scam' ? 'bg-red-500' :
+                      entry.level === 'Suspicious' ? 'bg-amber-500' :
+                      entry.level === 'Unclear' ? 'bg-blue-400' : 'bg-emerald-500'
+                    }`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                          entry.level === 'Likely Scam' ? 'bg-red-500/20 text-red-400' :
+                          entry.level === 'Suspicious' ? 'bg-amber-500/20 text-amber-400' :
+                          entry.level === 'Unclear' ? 'bg-blue-400/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
+                        }`}>
+                          {entry.score}% — {entry.level}
+                        </span>
+                        <span className="text-xs text-slate-600">{entry.matchCount} flag{entry.matchCount !== 1 ? 's' : ''}</span>
+                        <span className="text-xs text-slate-700 uppercase">{entry.channel}</span>
+                      </div>
+                      <p className="text-sm text-slate-400 truncate">{entry.input}</p>
+                      <p className="text-xs text-slate-600 mt-1">{new Date(entry.timestamp).toLocaleString()}</p>
+                    </div>
+                    <button onClick={() => handleDeleteHistory(entry.id)} className="p-1.5 text-slate-600 hover:text-red-400 transition-colors flex-shrink-0" title="Delete">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => setShowHistory(false)}
+              className="w-full py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition-colors text-sm"
+            >
+              {plainLanguage ? 'Back to scanner' : 'Return to Scanner'}
+            </button>
+          </div>
+        )}
+
+        {!result && !showHistory ? (
           <>
             {/* Input Channel Selector */}
             <div>
@@ -605,21 +1008,83 @@ export default function ScamDetector() {
 
             {/* Scam Playbook */}
             {result.playbook && (
-              <div className={`rounded-2xl border p-6 ${
+              <div className={`rounded-2xl border p-6 space-y-5 ${
                 result.rawScore >= 60 ? 'bg-red-950/30 border-red-500/30' : 'bg-amber-950/30 border-amber-500/30'
               }`}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Brain className="w-5 h-5 text-amber-400" />
-                  <h3 className={`font-bold text-white ${elderMode ? 'text-xl' : 'text-lg'}`}>
-                    {plainLanguage ? 'What kind of scam is this?' : 'Matched Playbook'}
-                  </h3>
+                <div>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Brain className="w-5 h-5 text-amber-400" />
+                    <h3 className={`font-bold text-white ${elderMode ? 'text-xl' : 'text-lg'}`}>
+                      {plainLanguage ? 'What kind of scam is this?' : 'Matched Playbook'}
+                    </h3>
+                  </div>
+                  <div className={`font-bold ${result.color} mb-2 ${elderMode ? 'text-lg' : ''}`}>
+                    {result.playbook.name}
+                  </div>
+                  <p className={`text-slate-300 leading-relaxed ${textSize}`}>
+                    {result.playbook.guide}
+                  </p>
                 </div>
-                <div className={`font-bold ${result.color} mb-2 ${elderMode ? 'text-lg' : ''}`}>
-                  {result.playbook.name}
+
+                {/* Step-by-step checklist */}
+                {result.playbook.steps && (
+                  <div>
+                    <h4 className={`font-bold text-white mb-3 flex items-center gap-2 ${elderMode ? 'text-lg' : 'text-base'}`}>
+                      <ChevronRight className="w-4 h-4 text-amber-400" />
+                      {plainLanguage ? 'Do this right now:' : 'Step-by-Step Action Plan'}
+                    </h4>
+                    <div className="space-y-2">
+                      {result.playbook.steps.map((step, idx) => (
+                        <div key={idx} className="flex items-start gap-3 bg-slate-800/50 rounded-lg p-3">
+                          <span className={`flex-shrink-0 w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs font-bold`}>
+                            {idx + 1}
+                          </span>
+                          <span className={`text-slate-200 ${textSize}`}>{step}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Playbook-specific contacts */}
+                {result.playbook.contacts && (
+                  <div>
+                    <h4 className={`font-bold text-white mb-2 flex items-center gap-2 ${elderMode ? 'text-lg' : 'text-base'}`}>
+                      <PhoneCall className="w-4 h-4 text-cyan-400" />
+                      {plainLanguage ? 'Who to call:' : 'Report To'}
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {result.playbook.contacts.map((contact, idx) => (
+                        <span key={idx} className={`px-3 py-1.5 bg-slate-800/50 rounded-lg text-slate-300 border border-slate-700 ${elderMode ? 'text-base' : 'text-xs'}`}>
+                          {contact}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Emergency Contacts (always shown for high-risk) */}
+            {result.rawScore >= 30 && (
+              <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6">
+                <h3 className={`font-bold text-white mb-4 flex items-center gap-2 ${elderMode ? 'text-xl' : 'text-lg'}`}>
+                  <PhoneCall className="w-5 h-5 text-cyan-400" />
+                  {plainLanguage ? 'Important numbers & websites' : 'Emergency Resources'}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {EMERGENCY_CONTACTS.map((c, idx) => (
+                    <div key={idx} className="flex items-center gap-3 bg-slate-800 rounded-lg p-3 border border-slate-700">
+                      {c.type === 'phone' ? <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0" /> :
+                       c.type === 'web' ? <ExternalLink className="w-4 h-4 text-cyan-400 flex-shrink-0" /> :
+                       <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />}
+                      <div>
+                        <div className={`font-semibold text-white ${elderMode ? 'text-base' : 'text-sm'}`}>{c.label}</div>
+                        <div className={`text-slate-400 ${elderMode ? 'text-base' : 'text-xs'}`}>{c.value}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <p className={`text-slate-300 leading-relaxed ${textSize}`}>
-                  {result.playbook.guide}
-                </p>
               </div>
             )}
 
@@ -686,7 +1151,7 @@ export default function ScamDetector() {
         )}
 
         {/* Feature Overview (shown below input) */}
-        {!result && (
+        {!result && !showHistory && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
             {[
               { icon: <Brain className="w-6 h-6 text-cyan-400" />, title: 'Multi-Signal Analysis', desc: 'Checks urgency, impersonation, payment cues, link reputation, and emotional manipulation patterns.' },
@@ -709,7 +1174,7 @@ export default function ScamDetector() {
           &larr; Back to SonderSec
         </Link>
         <p className="text-xs text-slate-600">
-          SonderSec Scam Detector v1.0 — Pattern-based analysis for educational purposes.
+          SonderSec Scam Detector v2.0 — Pattern-based analysis for educational purposes.
           Always verify independently.
         </p>
       </footer>

@@ -9,6 +9,7 @@ export default function Nav() {
   const links = [
     { to: '/', label: 'Home' },
     { to: '/what-we-teach', label: 'What We Teach' },
+    { to: '/algorithmic-shadows', label: 'Algorithmic Shadows' },
     { to: '/contact', label: 'Contact' },
     { to: '/about', label: 'About Us' },
   ]

@@ -5,20 +5,32 @@ import Home from './pages/Home'
 import WhatWeTeach from './pages/WhatWeTeach'
 import Contact from './pages/Contact'
 import About from './pages/About'
+import AlgorithmicShadows from './pages/AlgorithmicShadows'
 
-export default function App() {
+function SiteLayout({ children }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Nav />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/what-we-teach" element={<WhatWeTeach />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} />
-        </Routes>
-      </main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/algorithmic-shadows" element={<AlgorithmicShadows />} />
+      <Route path="*" element={
+        <SiteLayout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/what-we-teach" element={<WhatWeTeach />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </SiteLayout>
+      } />
+    </Routes>
   )
 }

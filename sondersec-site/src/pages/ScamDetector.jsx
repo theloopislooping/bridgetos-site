@@ -627,7 +627,7 @@ export default function ScamDetector() {
   };
 
   return (
-    <div className={`min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-cyan-500 selection:text-slate-900 ${elderMode ? 'text-lg' : ''}`}>
+    <div className={`min-h-screen bg-slate-950 text-gray-200 font-sans selection:bg-indigo-500 selection:text-white ${elderMode ? 'text-lg' : ''}`}>
 
       {/* Payment Interrupt Overlay */}
       {showInterrupt && !interruptDismissed && (
@@ -635,15 +635,16 @@ export default function ScamDetector() {
       )}
 
       {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-cyan-500/10 rounded-lg border border-cyan-500/20">
-              <Shield className="w-6 h-6 text-cyan-400" />
-            </div>
-            <div>
-              <h1 className="font-bold text-white text-lg leading-tight">Scam Detector</h1>
-              <p className="text-xs text-slate-500">by SonderSec</p>
+      <header className="border-b border-white/10 bg-charcoal-950 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Link to="/" className="text-white text-xl font-bold tracking-tight hover:text-gray-300 transition-colors">
+              SonderSec
+            </Link>
+            <span className="text-white/20">|</span>
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-indigo-400" />
+              <span className="font-semibold text-white text-sm">Scam Detector</span>
             </div>
           </div>
 
@@ -652,7 +653,7 @@ export default function ScamDetector() {
             <button
               onClick={() => setElderMode(!elderMode)}
               className={`p-2 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
-                elderMode ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'border-slate-700 text-slate-500 hover:text-slate-300'
+                elderMode ? 'bg-amber-500/20 border-amber-500/30 text-amber-400' : 'border-white/15 text-gray-500 hover:text-gray-300'
               }`}
               title="Elder / Accessibility Mode"
             >
@@ -662,7 +663,7 @@ export default function ScamDetector() {
             <button
               onClick={() => setPrivacyMode(!privacyMode)}
               className={`p-2 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
-                privacyMode ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : 'border-slate-700 text-slate-500 hover:text-slate-300'
+                privacyMode ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400' : 'border-white/15 text-gray-500 hover:text-gray-300'
               }`}
               title="Private Scan Mode"
             >
@@ -672,7 +673,7 @@ export default function ScamDetector() {
             <button
               onClick={() => setPlainLanguage(!plainLanguage)}
               className={`p-2 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
-                plainLanguage ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' : 'border-slate-700 text-slate-500 hover:text-slate-300'
+                plainLanguage ? 'bg-blue-500/20 border-blue-500/30 text-blue-400' : 'border-white/15 text-gray-500 hover:text-gray-300'
               }`}
               title="Plain Language Mode"
             >
@@ -682,7 +683,7 @@ export default function ScamDetector() {
             <button
               onClick={() => { setShowHistory(!showHistory); setResult(null); }}
               className={`p-2 rounded-lg border text-xs flex items-center gap-1.5 transition-colors ${
-                showHistory ? 'bg-cyan-500/20 border-cyan-500/30 text-cyan-400' : 'border-slate-700 text-slate-500 hover:text-slate-300'
+                showHistory ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-400' : 'border-white/15 text-gray-500 hover:text-gray-300'
               }`}
               title="Scan History"
             >
@@ -720,13 +721,13 @@ export default function ScamDetector() {
           <div className="space-y-4 animate-fade-in">
             <div className="flex items-center justify-between">
               <h2 className={`${headingSize} font-bold text-white flex items-center gap-2`}>
-                <History className="w-6 h-6 text-cyan-400" />
+                <History className="w-6 h-6 text-indigo-400" />
                 {plainLanguage ? 'Your past checks' : 'Scan History'}
               </h2>
               <div className="flex gap-2">
                 {history.length > 0 && (
                   <>
-                    <button onClick={handleExportHistory} className="p-2 rounded-lg border border-slate-700 text-slate-400 hover:text-white transition-colors" title="Export">
+                    <button onClick={handleExportHistory} className="p-2 rounded-lg border border-white/15 text-gray-400 hover:text-white transition-colors" title="Export">
                       <Download className="w-4 h-4" />
                     </button>
                     <button onClick={handleClearHistory} className="p-2 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-colors" title="Clear all">
@@ -738,7 +739,7 @@ export default function ScamDetector() {
             </div>
 
             {history.length === 0 ? (
-              <div className="bg-slate-900 rounded-2xl border border-slate-700 p-12 text-center">
+              <div className="bg-slate-900 rounded-2xl border border-white/10 p-12 text-center">
                 <Shield className="w-10 h-10 text-slate-600 mx-auto mb-3" />
                 <p className="text-slate-400">{plainLanguage ? 'No checks yet.' : 'No scans recorded yet.'}</p>
                 <p className="text-slate-600 text-xs mt-1">Scans in Private mode are not saved.</p>
@@ -746,7 +747,7 @@ export default function ScamDetector() {
             ) : (
               <div className="space-y-2">
                 {history.map((entry) => (
-                  <div key={entry.id} className="bg-slate-900 rounded-xl border border-slate-700 p-4 flex items-center gap-4 hover:border-slate-600 transition-colors">
+                  <div key={entry.id} className="bg-slate-900 rounded-xl border border-white/10 p-4 flex items-center gap-4 hover:border-white/20 transition-colors">
                     <div className={`w-3 h-3 rounded-full flex-shrink-0 ${
                       entry.level === 'Likely Scam' ? 'bg-red-500' :
                       entry.level === 'Suspicious' ? 'bg-amber-500' :
@@ -777,7 +778,7 @@ export default function ScamDetector() {
 
             <button
               onClick={() => setShowHistory(false)}
-              className="w-full py-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 hover:text-white transition-colors text-sm"
+              className="w-full py-3 bg-slate-900 border border-white/10 rounded-xl text-gray-400 hover:text-white transition-colors text-sm"
             >
               {plainLanguage ? 'Back to scanner' : 'Return to Scanner'}
             </button>
@@ -786,16 +787,23 @@ export default function ScamDetector() {
 
         {!result && !showHistory ? (
           <>
+            {/* Hero Intro */}
+            <div className="text-center py-6">
+              <h2 className={`${elderMode ? 'text-4xl' : 'text-3xl md:text-4xl'} font-black text-white tracking-tight mb-3`}>
+                {plainLanguage ? 'Check if something is a scam' : 'Analyze Suspicious Content'}
+              </h2>
+              <p className={`text-gray-400 max-w-2xl mx-auto ${textSize}`}>
+                {plainLanguage
+                  ? 'Paste a message, link, or email you received. We\'ll check it for scam patterns and tell you what to watch out for.'
+                  : 'Submit messages, URLs, or emails for pattern-based threat analysis. All processing happens locally — nothing leaves your device.'}
+              </p>
+            </div>
+
             {/* Input Channel Selector */}
             <div>
-              <h2 className={`${headingSize} font-bold text-white mb-2`}>
-                {plainLanguage ? 'What do you want to check?' : 'Select Evidence Channel'}
-              </h2>
-              <p className={`text-slate-400 ${textSize} mb-4`}>
-                {plainLanguage
-                  ? 'Pick how you received the suspicious message.'
-                  : 'Choose how you want to submit content for analysis.'}
-              </p>
+              <h3 className={`${elderMode ? 'text-xl' : 'text-lg'} font-bold text-white mb-3`}>
+                {plainLanguage ? 'How did you receive it?' : 'Evidence Channel'}
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {INPUT_CHANNELS.map((ch) => (
                   <button
@@ -803,11 +811,11 @@ export default function ScamDetector() {
                     onClick={() => setActiveChannel(ch.id)}
                     className={`p-4 rounded-xl border text-left transition-all ${
                       activeChannel === ch.id
-                        ? 'bg-cyan-500/10 border-cyan-500/30 shadow-lg shadow-cyan-900/10'
-                        : 'bg-slate-900 border-slate-700 hover:border-slate-600'
+                        ? 'bg-indigo-500/10 border-indigo-500/30 shadow-lg shadow-indigo-900/10'
+                        : 'bg-slate-900 border-white/10 hover:border-white/20'
                     }`}
                   >
-                    <div className={`mb-2 ${activeChannel === ch.id ? 'text-cyan-400' : 'text-slate-500'}`}>
+                    <div className={`mb-2 ${activeChannel === ch.id ? 'text-indigo-400' : 'text-slate-500'}`}>
                       {ch.icon}
                     </div>
                     <div className={`font-semibold text-white ${elderMode ? 'text-base' : 'text-sm'}`}>{ch.label}</div>
@@ -818,7 +826,7 @@ export default function ScamDetector() {
             </div>
 
             {/* Input Area */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6">
+            <div className="bg-slate-900 rounded-2xl border border-white/10 p-6">
               {(activeChannel === 'text' || activeChannel === 'email') && (
                 <div className="space-y-4">
                   <label className={`block font-semibold text-white ${elderMode ? 'text-xl' : 'text-base'}`}>
@@ -832,7 +840,7 @@ export default function ScamDetector() {
                     placeholder={activeChannel === 'email'
                       ? 'Paste full email including headers...'
                       : 'Paste the text message, WhatsApp message, social media DM, or email body here...'}
-                    className={`w-full bg-slate-800 border border-slate-600 rounded-xl p-4 text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none resize-none transition-colors ${elderMode ? 'text-lg h-48' : 'text-sm h-36'}`}
+                    className={`w-full bg-slate-800 border border-slate-600 rounded-xl p-4 text-slate-200 placeholder-slate-600 focus:border-indigo-500 focus:outline-none resize-none transition-colors ${elderMode ? 'text-lg h-48' : 'text-sm h-36'}`}
                   />
                 </div>
               )}
@@ -847,7 +855,7 @@ export default function ScamDetector() {
                     value={urlInput}
                     onChange={(e) => setUrlInput(e.target.value)}
                     placeholder="https://suspicious-link.example.com/..."
-                    className={`w-full bg-slate-800 border border-slate-600 rounded-xl p-4 text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none transition-colors ${elderMode ? 'text-lg' : 'text-sm'}`}
+                    className={`w-full bg-slate-800 border border-slate-600 rounded-xl p-4 text-slate-200 placeholder-slate-600 focus:border-indigo-500 focus:outline-none transition-colors ${elderMode ? 'text-lg' : 'text-sm'}`}
                   />
                 </div>
               )}
@@ -862,7 +870,7 @@ export default function ScamDetector() {
                   <input ref={fileInputRef} type="file" accept={activeChannel === 'screenshot' ? 'image/*' : 'audio/*'} className="hidden" />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className={`w-full border-2 border-dashed border-slate-600 rounded-xl p-8 flex flex-col items-center gap-3 hover:border-cyan-500/50 transition-colors ${elderMode ? 'py-12' : ''}`}
+                    className={`w-full border-2 border-dashed border-slate-600 rounded-xl p-8 flex flex-col items-center gap-3 hover:border-indigo-500/50 transition-colors ${elderMode ? 'py-12' : ''}`}
                   >
                     <Upload className="w-8 h-8 text-slate-500" />
                     <span className={`text-slate-400 ${elderMode ? 'text-lg' : 'text-sm'}`}>
@@ -876,7 +884,7 @@ export default function ScamDetector() {
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
                       placeholder="Type or paste the content here as a backup..."
-                      className="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none resize-none h-24"
+                      className="w-full bg-slate-800 border border-slate-600 rounded-xl p-3 text-sm text-slate-200 placeholder-slate-600 focus:border-indigo-500 focus:outline-none resize-none h-24"
                     />
                   </div>
                 </div>
@@ -890,7 +898,7 @@ export default function ScamDetector() {
                   analyzing
                     ? 'bg-slate-700 text-slate-400 cursor-wait'
                     : (activeChannel === 'url' ? urlInput : inputText).trim()
-                      ? 'bg-cyan-500 text-slate-900 hover:bg-cyan-400 shadow-lg shadow-cyan-900/30'
+                      ? 'bg-indigo-500 text-slate-900 hover:bg-indigo-400 shadow-lg shadow-indigo-900/30'
                       : 'bg-slate-800 text-slate-600 cursor-not-allowed'
                 } ${elderMode ? 'text-xl py-5' : ''}`}
               >
@@ -917,7 +925,9 @@ export default function ScamDetector() {
             </button>
 
             {/* Risk Score Card */}
-            <div className={`bg-slate-900 rounded-2xl border ${result.borderColor}/30 p-6 md:p-8`}>
+            <div className={`bg-slate-900 rounded-2xl border ${result.borderColor}/30 p-6 md:p-8 shadow-lg`}
+              style={{ boxShadow: result.rawScore >= 60 ? '0 0 40px rgba(239,68,68,0.08)' : result.rawScore >= 30 ? '0 0 40px rgba(245,158,11,0.08)' : 'none' }}
+            >
               <div className="flex items-start gap-5 mb-6">
                 {result.icon}
                 <div className="flex-1">
@@ -948,7 +958,7 @@ export default function ScamDetector() {
 
             {/* Reason Codes */}
             {result.matches.length > 0 && (
-              <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6">
+              <div className="bg-slate-900 rounded-2xl border border-white/10 p-6">
                 <h3 className={`font-bold text-white mb-4 flex items-center gap-2 ${elderMode ? 'text-xl' : 'text-lg'}`}>
                   <AlertTriangle className="w-5 h-5 text-amber-400" />
                   {plainLanguage ? 'Why we flagged this' : 'Risk Indicators'}
@@ -977,13 +987,13 @@ export default function ScamDetector() {
             )}
 
             {/* Explainability - Highlighted Text */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-700 overflow-hidden">
+            <div className="bg-slate-900 rounded-2xl border border-white/10 overflow-hidden">
               <button
                 onClick={() => setShowExplain(!showExplain)}
                 className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-800/50 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-cyan-400" />
+                  <Eye className="w-5 h-5 text-indigo-400" />
                   <span className={`font-semibold text-white ${textSize}`}>
                     {plainLanguage ? 'Show me what\'s suspicious' : 'Explainability View'}
                   </span>
@@ -1050,7 +1060,7 @@ export default function ScamDetector() {
                 {result.playbook.contacts && (
                   <div>
                     <h4 className={`font-bold text-white mb-2 flex items-center gap-2 ${elderMode ? 'text-lg' : 'text-base'}`}>
-                      <PhoneCall className="w-4 h-4 text-cyan-400" />
+                      <PhoneCall className="w-4 h-4 text-indigo-400" />
                       {plainLanguage ? 'Who to call:' : 'Report To'}
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -1067,16 +1077,16 @@ export default function ScamDetector() {
 
             {/* Emergency Contacts (always shown for high-risk) */}
             {result.rawScore >= 30 && (
-              <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6">
+              <div className="bg-slate-900 rounded-2xl border border-white/10 p-6">
                 <h3 className={`font-bold text-white mb-4 flex items-center gap-2 ${elderMode ? 'text-xl' : 'text-lg'}`}>
-                  <PhoneCall className="w-5 h-5 text-cyan-400" />
+                  <PhoneCall className="w-5 h-5 text-indigo-400" />
                   {plainLanguage ? 'Important numbers & websites' : 'Emergency Resources'}
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {EMERGENCY_CONTACTS.map((c, idx) => (
                     <div key={idx} className="flex items-center gap-3 bg-slate-800 rounded-lg p-3 border border-slate-700">
                       {c.type === 'phone' ? <Phone className="w-4 h-4 text-emerald-400 flex-shrink-0" /> :
-                       c.type === 'web' ? <ExternalLink className="w-4 h-4 text-cyan-400 flex-shrink-0" /> :
+                       c.type === 'web' ? <ExternalLink className="w-4 h-4 text-indigo-400 flex-shrink-0" /> :
                        <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />}
                       <div>
                         <div className={`font-semibold text-white ${elderMode ? 'text-base' : 'text-sm'}`}>{c.label}</div>
@@ -1089,26 +1099,34 @@ export default function ScamDetector() {
             )}
 
             {/* Action Buttons */}
-            <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6">
+            <div className="bg-slate-900 rounded-2xl border border-white/10 p-6">
               <h3 className={`font-bold text-white mb-4 ${elderMode ? 'text-xl' : 'text-lg'}`}>
                 {plainLanguage ? 'What to do next' : 'Actions'}
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {/* Primary actions */}
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <button className={`flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500/15 border border-red-500/30 text-red-400 font-semibold hover:bg-red-500/25 transition-colors ${elderMode ? 'py-4 text-base' : 'text-sm'}`}>
+                  <Ban className="w-4 h-4" /> Block Sender
+                </button>
+                <button className={`flex items-center justify-center gap-2 py-3 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-400 font-semibold hover:bg-amber-500/25 transition-colors ${elderMode ? 'py-4 text-base' : 'text-sm'}`}>
+                  <Flag className="w-4 h-4" /> Report
+                </button>
+              </div>
+              {/* Secondary actions */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { icon: <Ban className="w-5 h-5" />, label: 'Block Sender', color: 'text-red-400 border-red-500/20 hover:bg-red-500/10' },
-                  { icon: <Copy className="w-5 h-5" />, label: copied ? 'Copied!' : 'Copy Report', color: 'text-cyan-400 border-cyan-500/20 hover:bg-cyan-500/10', action: copyReport },
-                  { icon: <Flag className="w-5 h-5" />, label: 'Report', color: 'text-amber-400 border-amber-500/20 hover:bg-amber-500/10' },
-                  { icon: <Save className="w-5 h-5" />, label: 'Save Evidence', color: 'text-blue-400 border-blue-500/20 hover:bg-blue-500/10' },
-                  { icon: <Share2 className="w-5 h-5" />, label: elderMode ? 'SEND TO TRUSTED PERSON' : 'Share', color: 'text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/10' },
-                  { icon: <HelpCircle className="w-5 h-5" />, label: plainLanguage ? 'Help me' : 'Recovery Guide', color: 'text-purple-400 border-purple-500/20 hover:bg-purple-500/10' },
+                  { icon: <Copy className="w-4 h-4" />, label: copied ? 'Copied!' : 'Copy Report', action: copyReport },
+                  { icon: <Save className="w-4 h-4" />, label: 'Save Evidence' },
+                  { icon: <Share2 className="w-4 h-4" />, label: elderMode ? 'SHARE' : 'Share' },
+                  { icon: <HelpCircle className="w-4 h-4" />, label: plainLanguage ? 'Help' : 'Recovery' },
                 ].map((btn, idx) => (
                   <button
                     key={idx}
                     onClick={btn.action}
-                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-colors ${btn.color} ${elderMode ? 'p-5' : ''}`}
+                    className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/20 transition-colors ${elderMode ? 'p-4' : ''}`}
                   >
                     {btn.icon}
-                    <span className={`font-semibold ${elderMode ? 'text-base' : 'text-xs'}`}>{btn.label}</span>
+                    <span className={`font-medium ${elderMode ? 'text-sm' : 'text-xs'}`}>{btn.label}</span>
                   </button>
                 ))}
               </div>
@@ -1124,7 +1142,7 @@ export default function ScamDetector() {
 
             {/* False Positive */}
             {!markedSafe && result.rawScore > 0 && (
-              <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 text-center">
+              <div className="bg-slate-900 rounded-2xl border border-white/10 p-6 text-center">
                 <p className={`text-slate-400 mb-3 ${textSize}`}>
                   {plainLanguage ? 'Did we get this wrong?' : 'Think this is a false positive?'}
                 </p>
@@ -1154,14 +1172,14 @@ export default function ScamDetector() {
         {!result && !showHistory && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
             {[
-              { icon: <Brain className="w-6 h-6 text-cyan-400" />, title: 'Multi-Signal Analysis', desc: 'Checks urgency, impersonation, payment cues, link reputation, and emotional manipulation patterns.' },
+              { icon: <Brain className="w-6 h-6 text-indigo-400" />, title: 'Multi-Signal Analysis', desc: 'Checks urgency, impersonation, payment cues, link reputation, and emotional manipulation patterns.' },
               { icon: <Shield className="w-6 h-6 text-emerald-400" />, title: 'Scam Playbooks', desc: 'Auto-matches to known scam types and provides tailored defense guides for each threat.' },
               { icon: <Heart className="w-6 h-6 text-amber-400" />, title: 'Built for Everyone', desc: 'Safety mode for elders, plain language, privacy-first, and multilingual support.' },
             ].map((feat, idx) => (
-              <div key={idx} className="bg-slate-900 border border-slate-800 rounded-xl p-5">
+              <div key={idx} className="bg-slate-900 border border-white/10 rounded-xl p-5 hover:border-indigo-500/30 transition-colors">
                 <div className="mb-3">{feat.icon}</div>
                 <h4 className="font-bold text-white text-sm mb-1">{feat.title}</h4>
-                <p className="text-slate-500 text-xs leading-relaxed">{feat.desc}</p>
+                <p className="text-gray-500 text-xs leading-relaxed">{feat.desc}</p>
               </div>
             ))}
           </div>
@@ -1169,14 +1187,15 @@ export default function ScamDetector() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 mt-16 py-6 text-center space-y-2">
-        <Link to="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-          &larr; Back to SonderSec
-        </Link>
-        <p className="text-xs text-slate-600">
-          SonderSec Scam Detector v2.0 — Pattern-based analysis for educational purposes.
-          Always verify independently.
-        </p>
+      <footer className="border-t border-white/10 bg-charcoal-950 mt-16 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+          <p>&copy; {new Date().getFullYear()} SonderSec. Pattern-based analysis for educational purposes.</p>
+          <div className="flex gap-6">
+            <Link to="/" className="hover:text-gray-300 transition-colors">Home</Link>
+            <Link to="/safe-curriculum" className="hover:text-gray-300 transition-colors">S.A.F.E.</Link>
+            <Link to="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
+          </div>
+        </div>
       </footer>
     </div>
   );

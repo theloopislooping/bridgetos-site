@@ -7,6 +7,7 @@ import Contact from './pages/Contact'
 import About from './pages/About'
 import AlgorithmicShadows from './pages/AlgorithmicShadows'
 import SafeCurriculum from './pages/SafeCurriculum'
+import ScamDetector from './pages/ScamDetector'
 
 function SiteLayout({ children }) {
   return (
@@ -23,6 +24,7 @@ export default function App() {
     <Routes>
       <Route path="/algorithmic-shadows" element={<AlgorithmicShadows />} />
       <Route path="/safe-curriculum" element={<SafeCurriculum />} />
+      <Route path="/scam-detector" element={<ScamDetector />} />
       <Route path="*" element={
         <SiteLayout>
           <Routes>

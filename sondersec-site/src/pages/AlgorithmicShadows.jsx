@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Shield,
   AlertTriangle,
@@ -979,6 +980,7 @@ const DefenseChapter = ({ onNavigate }) => {
 // --- MAIN PAGE ---
 
 export default function AlgorithmicShadows() {
+  useEffect(() => { document.title = 'Algorithmic Shadows — SonderSec'; }, []);
   const [activeChapter, setActiveChapter] = useState('cover');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -1048,8 +1050,9 @@ export default function AlgorithmicShadows() {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-slate-800 text-xs text-slate-600 text-center">
-            &copy; 2024 SonderSec AI Safety Guide
+          <div className="p-4 border-t border-slate-800 text-xs text-slate-600 text-center space-y-2">
+            <Link to="/" className="block hover:text-slate-300 transition-colors">&larr; Back to SonderSec</Link>
+            <p>&copy; {new Date().getFullYear()} SonderSec AI Safety Guide</p>
           </div>
         </aside>
 
@@ -1092,15 +1095,6 @@ export default function AlgorithmicShadows() {
 
       </div>
 
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 }

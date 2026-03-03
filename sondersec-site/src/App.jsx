@@ -8,6 +8,7 @@ import About from './pages/About'
 import AlgorithmicShadows from './pages/AlgorithmicShadows'
 import SafeCurriculum from './pages/SafeCurriculum'
 import ScamDetector from './pages/ScamDetector'
+import NotFound from './pages/NotFound'
 
 function SiteLayout({ children }) {
   return (
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/what-we-teach" element={<WhatWeTeach />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/about" element={<About />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </SiteLayout>
       } />

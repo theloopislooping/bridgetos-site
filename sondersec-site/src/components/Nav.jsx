@@ -25,12 +25,12 @@ export default function Nav() {
           </Link>
 
           {/* Desktop */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6">
             {links.map(({ to, label }) => (
               <Link
                 key={to}
                 to={to}
-                className={`text-sm transition-colors ${
+                className={`text-sm whitespace-nowrap transition-colors ${
                   pathname === to
                     ? 'text-white font-medium'
                     : 'text-gray-400 hover:text-white'
@@ -39,17 +39,11 @@ export default function Nav() {
                 {label}
               </Link>
             ))}
-            <Link
-              to="/contact"
-              className="ml-2 px-5 py-2 border border-white text-white text-sm rounded hover:bg-white hover:text-charcoal-950 transition-colors"
-            >
-              Contact Us
-            </Link>
           </div>
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden text-white"
+            className="lg:hidden text-white"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -60,7 +54,7 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden bg-charcoal-950 border-t border-white/10 px-4 pb-4">
+        <div className="lg:hidden bg-charcoal-950 border-t border-white/10 px-4 pb-4">
           {links.map(({ to, label }) => (
             <Link
               key={to}
@@ -73,13 +67,6 @@ export default function Nav() {
               {label}
             </Link>
           ))}
-          <Link
-            to="/contact"
-            onClick={() => setOpen(false)}
-            className="mt-2 inline-block px-5 py-2 border border-white text-white text-sm rounded"
-          >
-            Contact Us
-          </Link>
         </div>
       )}
     </nav>

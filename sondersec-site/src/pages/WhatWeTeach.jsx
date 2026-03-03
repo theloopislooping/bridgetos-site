@@ -1,3 +1,5 @@
+import { useEffect } from 'react'
+
 const workshops = [
   {
     number: 1,
@@ -50,6 +52,7 @@ const workshops = [
 ]
 
 export default function WhatWeTeach() {
+  useEffect(() => { document.title = 'What We Teach — SonderSec'; }, []);
   return (
     <div className="bg-white min-h-screen">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20">

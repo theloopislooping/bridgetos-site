@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 export default function Contact() {
+  useEffect(() => { document.title = 'Contact — SonderSec'; }, []);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -112,11 +112,7 @@ export default function Contact() {
             </div>
 
             <p className="text-xs text-gray-400">
-              Our{' '}
-              <Link to="/privacy" className="underline hover:text-gray-600">
-                privacy policy
-              </Link>{' '}
-              applies.
+              Our privacy policy applies.
             </p>
 
             <button

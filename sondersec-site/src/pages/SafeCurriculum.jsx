@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Shield,
   ChevronRight,
@@ -197,6 +198,7 @@ const ModuleCard = ({ mod, index }) => {
 // --- MAIN PAGE ---
 
 export default function SafeCurriculum() {
+  useEffect(() => { document.title = 'S.A.F.E. Curriculum — SonderSec'; }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-700 font-sans">
       {/* Container */}
@@ -270,28 +272,21 @@ export default function SafeCurriculum() {
           </div>
 
           {/* Footer */}
-          <footer className="bg-slate-800 text-white px-6 md:px-12 py-10 text-center">
+          <footer className="bg-slate-800 text-white px-6 md:px-12 py-10 text-center space-y-4">
             <div className="flex items-center justify-center gap-2 mb-3">
               <BookOpen className="w-5 h-5 text-amber-400" />
-              <h3 className="text-lg font-bold">S.A.F.E. v1.0 Curriculum &mdash; SonderSec 2025</h3>
+              <h3 className="text-lg font-bold">S.A.F.E. v1.0 Curriculum &mdash; SonderSec {new Date().getFullYear()}</h3>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed max-w-3xl mx-auto">
               Developed in parallel with PhD research as a pilot curriculum to address the most common cyber-threats faced by older adults. S.A.F.E. leverages behavioral cybersecurity, symbolic encoding, and AI simulation tools to deliver accessible and repeatable learning outcomes for vulnerable populations.
             </p>
+            <Link to="/" className="inline-block text-sm text-slate-400 hover:text-white transition-colors">
+              &larr; Back to SonderSec
+            </Link>
           </footer>
 
         </div>
       </div>
-
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 }

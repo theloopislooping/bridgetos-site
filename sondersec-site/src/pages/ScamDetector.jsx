@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Shield,
   ShieldCheck,
@@ -6,7 +7,6 @@ import {
   ShieldQuestion,
   AlertTriangle,
   CheckCircle,
-  XCircle,
   Upload,
   Link as LinkIcon,
   MessageSquare,
@@ -14,14 +14,10 @@ import {
   Mic,
   Camera,
   Mail,
-  QrCode,
-  ChevronRight,
   ChevronDown,
   Eye,
   EyeOff,
-  Users,
   Heart,
-  Volume2,
   Globe,
   Lock,
   Ban,
@@ -38,7 +34,6 @@ import {
   ArrowLeft,
   Fingerprint,
   Brain,
-  Smartphone,
   AlertOctagon,
 } from 'lucide-react';
 
@@ -149,12 +144,22 @@ function analyzeContent(text) {
   return { rawScore, confidence, level, color, bgColor, borderColor, icon, matches, playbook, needsPaymentInterrupt };
 }
 
-function highlightText(text, matches) {
-  if (!matches.length) return text;
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
-  let result = text;
+function highlightText(text, matches) {
+  if (!matches.length) return escapeHtml(text);
+
+  let result = escapeHtml(text);
   for (const m of matches) {
-    const regex = new RegExp(`(${m.matched.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const escaped = escapeHtml(m.matched);
+    const regex = new RegExp(`(${escaped.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     result = result.replace(regex, `<mark class="bg-red-500/30 text-red-200 px-0.5 rounded">$1</mark>`);
   }
   return result;
@@ -237,6 +242,7 @@ const PaymentInterrupt = ({ onDismiss }) => (
 // --- MAIN PAGE ---
 
 export default function ScamDetector() {
+  useEffect(() => { document.title = 'Scam Detector — SonderSec'; }, []);
   const [activeChannel, setActiveChannel] = useState('text');
   const [inputText, setInputText] = useState('');
   const [urlInput, setUrlInput] = useState('');
@@ -698,22 +704,15 @@ export default function ScamDetector() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800 mt-16 py-6 text-center">
+      <footer className="border-t border-slate-800 mt-16 py-6 text-center space-y-2">
+        <Link to="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          &larr; Back to SonderSec
+        </Link>
         <p className="text-xs text-slate-600">
           SonderSec Scam Detector v1.0 — Pattern-based analysis for educational purposes.
           Always verify independently.
         </p>
       </footer>
-
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.4s ease-out forwards;
-        }
-      `}</style>
     </div>
   );
 }

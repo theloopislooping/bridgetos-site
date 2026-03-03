@@ -22,6 +22,15 @@ import {
   Globe,
   Wifi,
   Heart,
+  BarChart3,
+  Search,
+  ShieldCheck,
+  Radio,
+  Smartphone,
+  Ban,
+  Phone,
+  BookOpen,
+  Fingerprint,
 } from 'lucide-react';
 
 // --- DATA & CONTENT ---
@@ -29,10 +38,13 @@ import {
 const CHAPTERS = [
   { id: 'cover', title: 'Cover: Algorithmic Shadows' },
   { id: 'ch1', title: 'Ch 1: Why AI Safety Isn\'t Equal' },
+  { id: 'ch1b', title: 'Part I: The Unequal Landscape' },
   { id: 'ch2', title: 'Ch 2: How AI Deceives' },
   { id: 'ch3', title: 'Ch 3: What Makes a Group Vulnerable?' },
   { id: 'ch4', title: 'Ch 4: The Exploitation Loop' },
   { id: 'ch5', title: 'Ch 5: Digital Resilience' },
+  { id: 'deep-dive', title: 'Deep Dive: The Error Gap' },
+  { id: 'defense', title: 'Defense Toolkit' },
 ];
 
 const DECEPTION_TOOLS = [
@@ -189,6 +201,84 @@ const STRATEGIES = [
     title: "Trust Discomfort",
     icon: <HelpCircle className="w-6 h-6 text-emerald-400" />,
     content: "AI is trained to feel familiar. Your gut isn't. If it feels off, don't explain it away. Stop."
+  }
+];
+
+const ERROR_GAP_DATA = [
+  { demographic: "White Males", rate: 0.8, level: "LOW", color: "bg-emerald-500", barWidth: "w-[3%]" },
+  { demographic: "White Females", rate: 2.5, level: "MED", color: "bg-yellow-500", barWidth: "w-[7%]" },
+  { demographic: "Black Males", rate: 8.0, level: "HIGH", color: "bg-orange-500", barWidth: "w-[24%]" },
+  { demographic: "Black Females", rate: 34.0, level: "CRITICAL", color: "bg-red-600", barWidth: "w-full" },
+];
+
+const DEEP_DIVE_FACTORS = [
+  {
+    title: "Training Data Imbalance",
+    desc: "AI models are trained on datasets that over-represent lighter-skinned faces. The system literally has less practice recognizing darker skin tones.",
+    icon: <BarChart3 className="w-6 h-6 text-amber-400" />
+  },
+  {
+    title: "Lighting & Contrast Assumptions",
+    desc: "Camera sensors and image processing pipelines were historically calibrated for lighter skin. AI inherits these hardware biases as 'ground truth.'",
+    icon: <Eye className="w-6 h-6 text-amber-400" />
+  },
+  {
+    title: "Benchmark Gaps",
+    desc: "Performance testing often uses datasets that don't reflect demographic diversity. A model can pass industry benchmarks while failing real-world populations.",
+    icon: <Target className="w-6 h-6 text-amber-400" />
+  },
+  {
+    title: "Feedback Loop Absence",
+    desc: "Affected communities are rarely at the table when error reports are filed. Without feedback, the system never learns it's wrong.",
+    icon: <RefreshCw className="w-6 h-6 text-amber-400" />
+  },
+  {
+    title: "Intersectional Compounding",
+    desc: "Race + gender compound error rates. Being a Black woman isn't just 'Black' + 'woman' — the error rate multiplies at the intersection, not just adds.",
+    icon: <Users className="w-6 h-6 text-amber-400" />
+  },
+];
+
+const DEFENSE_STEPS = [
+  {
+    title: "Recognize the Pattern",
+    icon: <Search className="w-6 h-6 text-cyan-400" />,
+    checks: [
+      "Is this message creating urgency? ('Expires today!', 'Act now!')",
+      "Is it in a language I wouldn't expect from this sender?",
+      "Am I being asked to click, call, or send something?",
+      "Does it reference money, benefits, legal status, or account access?"
+    ]
+  },
+  {
+    title: "Do NOT Interact",
+    icon: <Ban className="w-6 h-6 text-red-400" />,
+    checks: [
+      "Do not click any links in the message",
+      "Do not call any number listed in the message",
+      "Do not reply — even to say 'stop' or 'unsubscribe'",
+      "Do not forward it to others without context"
+    ]
+  },
+  {
+    title: "Verify Independently",
+    icon: <Phone className="w-6 h-6 text-emerald-400" />,
+    checks: [
+      "Look up the real organization number yourself (Google it, check a bill)",
+      "Call them directly using a number you already trust",
+      "Ask: 'Did you send me a message at [time]?'",
+      "If they say no — you just stopped an attack"
+    ]
+  },
+  {
+    title: "Report & Protect",
+    icon: <ShieldCheck className="w-6 h-6 text-amber-400" />,
+    checks: [
+      "Forward phishing texts to 7726 (SPAM) on most carriers",
+      "Report to FTC at ReportFraud.ftc.gov",
+      "Block the sender number",
+      "Tell one person you trust what happened — resilience is relational"
+    ]
   }
 ];
 
@@ -502,6 +592,390 @@ const Chapter5 = () => (
   </div>
 );
 
+// --- NEW CHAPTER RENDERERS ---
+
+const Chapter1b = ({ onNavigate }) => {
+  const [scamRevealed, setScamRevealed] = useState(false);
+
+  return (
+    <div className="space-y-10 max-w-4xl mx-auto animate-fade-in">
+      <SectionHeader title="The Unequal Landscape" subtitle="The Data You Need to See" />
+
+      <p className="text-lg text-slate-300 leading-relaxed">
+        We cannot talk about safety until we talk about <strong>the Gap</strong>. Below is a visualization of how AI "sees" different people — based on facial recognition error rates from NIST research.
+      </p>
+
+      {/* Data Visualization: The Error Gap */}
+      <div className="bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-700 shadow-2xl">
+        <div className="flex items-center gap-3 mb-6">
+          <BarChart3 className="w-6 h-6 text-amber-400" />
+          <h3 className="text-xl font-bold text-white">The Error Gap</h3>
+        </div>
+        <p className="text-slate-400 text-sm mb-6">How likely is AI to misidentify you?</p>
+
+        <div className="space-y-4">
+          {ERROR_GAP_DATA.map((row, idx) => (
+            <div key={idx} className="group">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-slate-200 font-medium text-sm">{row.demographic}</span>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                  row.level === 'LOW' ? 'bg-emerald-500/20 text-emerald-400' :
+                  row.level === 'MED' ? 'bg-yellow-500/20 text-yellow-400' :
+                  row.level === 'HIGH' ? 'bg-orange-500/20 text-orange-400' :
+                  'bg-red-500/20 text-red-400'
+                }`}>
+                  {row.rate}% — {row.level}
+                </span>
+              </div>
+              <div className="w-full bg-slate-800 rounded-full h-4 overflow-hidden">
+                <div
+                  className={`h-full ${row.color} rounded-full transition-all duration-1000 ease-out`}
+                  style={{ width: `${Math.max((row.rate / 34) * 100, 3)}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
+          <p className="text-sm text-slate-200">
+            <strong className="text-red-400">THE TAKEAWAY:</strong> If you are in the red zone, "standard" advice like "Just use facial ID verification" puts you at risk of being locked out of your bank account or falsely flagged by police.
+          </p>
+        </div>
+      </div>
+
+      {/* Live Intercept: Scam Simulation */}
+      <div className="bg-slate-900 rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+        <div className="px-6 py-4 bg-slate-800 border-b border-slate-700 flex items-center gap-3">
+          <Radio className="w-5 h-5 text-red-500 animate-pulse" />
+          <span className="text-sm font-bold text-red-400 uppercase tracking-wider">Live Intercept: The "Help" Scam</span>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <p className="text-slate-400 text-sm">How real-world data is weaponized against people right now.</p>
+
+          {/* Simulated phone message */}
+          <div className="max-w-sm mx-auto">
+            <div className="bg-slate-800 rounded-2xl border border-slate-600 overflow-hidden">
+              {/* Phone header */}
+              <div className="px-4 py-2 bg-slate-700 flex items-center justify-between">
+                <Smartphone className="w-4 h-4 text-slate-400" />
+                <span className="text-xs text-slate-400">10:42 AM</span>
+              </div>
+              {/* Message */}
+              <div className="p-4">
+                <div className="text-xs text-slate-500 mb-2 font-mono">From: GOV-Relief-Funds</div>
+                <div className="bg-slate-700 rounded-xl rounded-tl-none p-4 text-sm text-slate-200 leading-relaxed">
+                  H0la! Su estado de cuenta muestra que usted califica para $500 en ayuda energ&eacute;tica. Haga clic aqu&iacute; para reclamar antes de que expire: <span className="text-blue-400 underline cursor-not-allowed">[link]</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Analysis toggle */}
+          <button
+            onClick={() => setScamRevealed(!scamRevealed)}
+            className="w-full py-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-400 font-semibold hover:bg-amber-500/20 transition-colors flex items-center justify-center gap-2"
+          >
+            <Eye className="w-4 h-4" />
+            {scamRevealed ? 'Hide Analysis' : 'Reveal Why This Works'}
+          </button>
+
+          {scamRevealed && (
+            <div className="space-y-3 animate-fade-in">
+              {[
+                { label: "Language Targeting", desc: "Targets Spanish speakers — a population often overlooked by mainstream English-first safety guides." },
+                { label: "Economic Pressure", desc: "References energy assistance — targeting people worried about utility bills and basic needs." },
+                { label: "Urgency", desc: "'Before it expires' — creates a fear of missing out on help you desperately need." },
+                { label: "Authority Mimicry", desc: "'GOV-Relief-Funds' — the sender name mimics a government entity to bypass skepticism." },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-start gap-3 bg-slate-800 p-4 rounded-lg border-l-2 border-amber-500">
+                  <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="text-amber-400 font-bold text-sm">{item.label}:</span>
+                    <span className="text-slate-300 text-sm ml-1">{item.desc}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Interactive Choice Point */}
+      <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 border border-slate-600 shadow-2xl">
+        <div className="text-center mb-6">
+          <Fingerprint className="w-10 h-10 text-amber-500 mx-auto mb-3" />
+          <h3 className="text-2xl font-bold text-white">Choose Your Path</h3>
+          <p className="text-slate-400 mt-2">You're the reader. How do you want to proceed?</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button
+            onClick={() => onNavigate('deep-dive')}
+            className="group p-6 bg-slate-800 rounded-xl border border-slate-600 hover:border-amber-500/50 transition-all text-left hover:shadow-lg hover:shadow-amber-900/10"
+          >
+            <Search className="w-8 h-8 text-purple-400 mb-3" />
+            <h4 className="font-bold text-white mb-2">Deep Dive</h4>
+            <p className="text-slate-400 text-sm">Explain why the AI error rate is so high for darker skin tones.</p>
+            <span className="mt-3 text-xs text-purple-400 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              Explore <ChevronRight size={12} />
+            </span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('defense')}
+            className="group p-6 bg-slate-800 rounded-xl border border-slate-600 hover:border-emerald-500/50 transition-all text-left hover:shadow-lg hover:shadow-emerald-900/10"
+          >
+            <ShieldCheck className="w-8 h-8 text-emerald-400 mb-3" />
+            <h4 className="font-bold text-white mb-2">Defense Mode</h4>
+            <p className="text-slate-400 text-sm">Show me the toolkit to stop that text scam above.</p>
+            <span className="mt-3 text-xs text-emerald-400 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              Defend <ChevronRight size={12} />
+            </span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('ch2')}
+            className="group p-6 bg-slate-800 rounded-xl border border-slate-600 hover:border-amber-500/50 transition-all text-left hover:shadow-lg hover:shadow-amber-900/10"
+          >
+            <Mic className="w-8 h-8 text-amber-400 mb-3" />
+            <h4 className="font-bold text-white mb-2">Next Chapter</h4>
+            <p className="text-slate-400 text-sm">Move to Voice Cloning & Audio Scams.</p>
+            <span className="mt-3 text-xs text-amber-400 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              Continue <ChevronRight size={12} />
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const DeepDiveChapter = ({ onNavigate }) => (
+  <div className="space-y-8 max-w-4xl mx-auto animate-fade-in">
+    <SectionHeader title="Deep Dive: The Error Gap" subtitle="Why AI Fails Darker Skin Tones" />
+
+    <p className="text-lg text-slate-300 leading-relaxed">
+      The 34% misidentification rate for Black women isn't a bug that slipped through. It's the predictable result of how these systems were built, tested, and deployed.
+    </p>
+
+    <BlockQuote>
+      The algorithm doesn't have to be racist. It just has to be trained on a racist dataset.
+    </BlockQuote>
+
+    {/* Error rate reminder */}
+    <div className="bg-slate-900 rounded-xl p-6 border border-slate-700">
+      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <BarChart3 className="w-5 h-5 text-amber-400" />
+        Recall: The Numbers
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {ERROR_GAP_DATA.map((row, idx) => (
+          <div key={idx} className={`p-3 rounded-lg border text-center ${
+            row.level === 'LOW' ? 'border-emerald-500/30 bg-emerald-500/5' :
+            row.level === 'MED' ? 'border-yellow-500/30 bg-yellow-500/5' :
+            row.level === 'HIGH' ? 'border-orange-500/30 bg-orange-500/5' :
+            'border-red-500/30 bg-red-500/5'
+          }`}>
+            <div className="text-2xl font-black text-white">{row.rate}%</div>
+            <div className="text-xs text-slate-400 mt-1">{row.demographic}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Contributing Factors */}
+    <h3 className="text-2xl font-bold text-white mt-10">Five Contributing Factors</h3>
+    <div className="space-y-4">
+      {DEEP_DIVE_FACTORS.map((factor, idx) => (
+        <div key={idx} className="bg-slate-800 rounded-xl p-6 border border-slate-700 flex gap-5 items-start hover:border-amber-500/30 transition-colors">
+          <div className="p-3 bg-slate-900 rounded-lg border border-slate-700 flex-shrink-0">
+            {factor.icon}
+          </div>
+          <div>
+            <h4 className="text-lg font-bold text-white mb-1">{idx + 1}. {factor.title}</h4>
+            <p className="text-slate-300 text-sm leading-relaxed">{factor.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* So what? */}
+    <div className="bg-amber-900/20 border border-amber-500/30 p-6 rounded-xl mt-8">
+      <h4 className="text-amber-400 font-bold text-lg mb-3">What This Means For You</h4>
+      <ul className="space-y-2">
+        {[
+          "If you're in a high-error demographic, facial verification systems may lock you out of legitimate services.",
+          "False positives in law enforcement databases can lead to wrongful stops, detentions, or worse.",
+          "'Just verify your identity with a selfie' is not neutral advice — it's riskier for some people.",
+          "Advocating for better AI means demanding diverse training data and independent audits.",
+        ].map((item, idx) => (
+          <li key={idx} className="flex items-start gap-3 text-slate-200 text-sm">
+            <span className="mt-1.5 w-2 h-2 bg-amber-500 rounded-full flex-shrink-0" />
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Navigation choices */}
+    <div className="flex flex-col sm:flex-row gap-4 mt-8">
+      <button
+        onClick={() => onNavigate('defense')}
+        className="flex-1 py-4 px-6 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 font-semibold hover:bg-emerald-500/20 transition-colors flex items-center justify-center gap-2"
+      >
+        <ShieldCheck className="w-5 h-5" /> Defense Toolkit
+      </button>
+      <button
+        onClick={() => onNavigate('ch2')}
+        className="flex-1 py-4 px-6 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 font-semibold hover:bg-amber-500/20 transition-colors flex items-center justify-center gap-2"
+      >
+        <Mic className="w-5 h-5" /> Voice Cloning & Audio Scams
+      </button>
+    </div>
+  </div>
+);
+
+const DefenseChapter = ({ onNavigate }) => {
+  const [completedSteps, setCompletedSteps] = useState([]);
+
+  const toggleStep = (idx) => {
+    setCompletedSteps(prev =>
+      prev.includes(idx) ? prev.filter(i => i !== idx) : [...prev, idx]
+    );
+  };
+
+  return (
+    <div className="space-y-10 max-w-4xl mx-auto animate-fade-in">
+      <SectionHeader title="Defense Toolkit" subtitle="How to Stop the Scam You Just Saw" />
+
+      <p className="text-lg text-slate-300 leading-relaxed">
+        You saw the scam. Now here's the step-by-step playbook to neutralize it — and any message like it.
+      </p>
+
+      {/* Reminder of the scam */}
+      <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 flex items-start gap-4">
+        <Smartphone className="w-8 h-8 text-slate-500 flex-shrink-0 mt-1" />
+        <div>
+          <span className="text-xs text-red-400 font-bold uppercase tracking-wider">Threat Recalled</span>
+          <p className="text-slate-300 text-sm mt-1 italic">
+            "H0la! Su estado de cuenta muestra que usted califica para $500 en ayuda energ&eacute;tica. Haga clic aqu&iacute; para reclamar antes de que expire: [link]"
+          </p>
+        </div>
+      </div>
+
+      {/* Interactive Defense Steps */}
+      <div className="space-y-6">
+        {DEFENSE_STEPS.map((step, idx) => (
+          <div key={idx} className={`bg-slate-900 rounded-xl border transition-all ${
+            completedSteps.includes(idx)
+              ? 'border-emerald-500/50 shadow-lg shadow-emerald-900/10'
+              : 'border-slate-700'
+          }`}>
+            {/* Step Header */}
+            <button
+              onClick={() => toggleStep(idx)}
+              className="w-full px-6 py-4 flex items-center justify-between text-left"
+            >
+              <div className="flex items-center gap-4">
+                <div className={`p-2 rounded-lg transition-colors ${
+                  completedSteps.includes(idx) ? 'bg-emerald-500/20' : 'bg-slate-800'
+                }`}>
+                  {step.icon}
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500 uppercase tracking-wider">Step {idx + 1}</span>
+                  <h4 className="text-lg font-bold text-white">{step.title}</h4>
+                </div>
+              </div>
+              {completedSteps.includes(idx) && (
+                <CheckCircle className="w-6 h-6 text-emerald-400" />
+              )}
+            </button>
+
+            {/* Checklist */}
+            <div className="px-6 pb-5">
+              <ul className="space-y-2">
+                {step.checks.map((check, cIdx) => (
+                  <li key={cIdx} className="flex items-start gap-3 text-sm">
+                    <div className={`mt-0.5 w-4 h-4 rounded border flex-shrink-0 flex items-center justify-center ${
+                      completedSteps.includes(idx) ? 'border-emerald-500 bg-emerald-500/20' : 'border-slate-600'
+                    }`}>
+                      {completedSteps.includes(idx) && <CheckCircle className="w-3 h-3 text-emerald-400" />}
+                    </div>
+                    <span className={completedSteps.includes(idx) ? 'text-slate-400' : 'text-slate-300'}>
+                      {check}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Progress */}
+      <div className="bg-slate-800 rounded-xl p-6 border border-slate-700 text-center">
+        <div className="flex items-center justify-center gap-2 mb-3">
+          {DEFENSE_STEPS.map((_, idx) => (
+            <div key={idx} className={`w-3 h-3 rounded-full transition-colors ${
+              completedSteps.includes(idx) ? 'bg-emerald-500' : 'bg-slate-600'
+            }`} />
+          ))}
+        </div>
+        <p className="text-slate-400 text-sm">
+          {completedSteps.length === DEFENSE_STEPS.length
+            ? 'All steps reviewed. You now have a complete defense playbook.'
+            : `${completedSteps.length} of ${DEFENSE_STEPS.length} steps reviewed. Click each step to mark it.`
+          }
+        </p>
+      </div>
+
+      {/* Quick Reference Card */}
+      <div className="bg-slate-100 rounded-xl p-8 text-center shadow-2xl">
+        <BookOpen className="w-8 h-8 text-slate-900 mx-auto mb-3" />
+        <h3 className="text-xl font-black text-slate-900 mb-2">QUICK REFERENCE</h3>
+        <div className="h-1 w-16 bg-amber-500 mx-auto my-4" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto">
+          <div className="bg-white p-3 rounded-lg border">
+            <span className="text-xs font-bold text-red-600 uppercase">Never</span>
+            <p className="text-sm text-slate-700 mt-1">Click links in unexpected messages</p>
+          </div>
+          <div className="bg-white p-3 rounded-lg border">
+            <span className="text-xs font-bold text-emerald-600 uppercase">Always</span>
+            <p className="text-sm text-slate-700 mt-1">Look up real numbers yourself</p>
+          </div>
+          <div className="bg-white p-3 rounded-lg border">
+            <span className="text-xs font-bold text-red-600 uppercase">Never</span>
+            <p className="text-sm text-slate-700 mt-1">Act under time pressure</p>
+          </div>
+          <div className="bg-white p-3 rounded-lg border">
+            <span className="text-xs font-bold text-emerald-600 uppercase">Always</span>
+            <p className="text-sm text-slate-700 mt-1">Tell one trusted person</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation choices */}
+      <div className="flex flex-col sm:flex-row gap-4 mt-8">
+        <button
+          onClick={() => onNavigate('deep-dive')}
+          className="flex-1 py-4 px-6 bg-purple-500/10 border border-purple-500/30 rounded-xl text-purple-400 font-semibold hover:bg-purple-500/20 transition-colors flex items-center justify-center gap-2"
+        >
+          <Search className="w-5 h-5" /> Deep Dive: Error Gap
+        </button>
+        <button
+          onClick={() => onNavigate('ch2')}
+          className="flex-1 py-4 px-6 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-400 font-semibold hover:bg-amber-500/20 transition-colors flex items-center justify-center gap-2"
+        >
+          <Mic className="w-5 h-5" /> Voice Cloning & Audio Scams
+        </button>
+      </div>
+    </div>
+  );
+};
+
 // --- MAIN PAGE ---
 
 export default function AlgorithmicShadows() {
@@ -518,10 +992,13 @@ export default function AlgorithmicShadows() {
     switch(activeChapter) {
       case 'cover': return <CoverView onStart={() => handleNav('ch1')} />;
       case 'ch1': return <Chapter1 />;
+      case 'ch1b': return <Chapter1b onNavigate={handleNav} />;
       case 'ch2': return <Chapter2 />;
       case 'ch3': return <Chapter3 />;
       case 'ch4': return <Chapter4 />;
       case 'ch5': return <Chapter5 />;
+      case 'deep-dive': return <DeepDiveChapter onNavigate={handleNav} />;
+      case 'defense': return <DefenseChapter onNavigate={handleNav} />;
       default: return <CoverView onStart={() => handleNav('ch1')} />;
     }
   };
